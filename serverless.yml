@@ -1,0 +1,35 @@
+service: serverless-rekognition
+
+package:
+  individually: true
+
+plugins:
+  - serverless-bundle
+  - serverless-offline
+  - serverless-dotenv-plugin
+
+#custom:
+#  stage: ${opt:stage, self:provider.stage}
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  profile: new-hades
+  region: us-east-1
+  environment:
+    ACCESS_KEY_ID: ${env:ACCESS_KEY_ID}
+    SECRET_ACCESS_KEY: ${env:SECRET_ACCESS_KEY}
+    PROJECT_VERSION_ARN: ${env:PROJECT_VERSION_ARN}
+
+functions:
+  search:
+    handler: functions/search.handler
+    events:
+      - http:
+          path: search
+          method: get
+          cors: true
+
+resources:
+  - ${file(resources/api-gateway-errors.yml)}
